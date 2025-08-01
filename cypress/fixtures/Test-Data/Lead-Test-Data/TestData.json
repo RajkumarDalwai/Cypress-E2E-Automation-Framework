@@ -1,0 +1,123 @@
+{
+  "NewTractorTestData": [
+    {
+      "mobile": "9740435404",
+      "state": "Karnataka",
+      "district": "Belagavi (Belgaum)",
+      "tehsil": "Athni"
+    },
+    {
+      "mobile": "9876543404",
+      "state": "Rajasthan",
+      "district": "Chittorgarh",
+      "tehsil": "Chittaurgarh"
+    },
+    {
+      "mobile": "9123456404",
+      "state": "Rajasthan",
+      "district": "Dholpur",
+      "tehsil": "Dholpur"
+    },
+    {
+      "mobile": "9876543404",
+      "state": "Maharashtra",
+      "district": "Buldhana",
+      "tehsil": "Buldana"
+    },
+    {
+      "mobile": "9567890404",
+      "state": "Punjab",
+      "district": "Barnala",
+      "tehsil": "Barnala"
+    },
+    {
+      "mobile": "9898989404",
+      "state": "Haryana",
+      "district": "Panipat",
+      "tehsil": "Bapoli"
+    },
+    {
+      "mobile": "9191919404",
+      "state": "Gujarat",
+      "district": "Bhavnagar",
+      "tehsil": "Sihor"
+    },
+    {
+      "mobile": "8888888404",
+      "state": "Kerala",
+      "district": "Kannur",
+      "tehsil": "Iritty"
+    },
+    {
+      "mobile": "7777777404",
+      "state": "Tamil Nadu",
+      "district": "Coimbatore",
+      "tehsil": "Coimbatore North"
+    },
+    {
+      "mobile": "6666666404",
+      "state": "Uttar Pradesh",
+      "district": "Noida",
+      "tehsil": "Noida"
+    },
+    {
+      "mobile": "7555555404",
+      "state": "Madhya Pradesh",
+      "district": "Dewas",
+      "tehsil": "Chapda"
+    },
+    {
+      "mobile": "8672345404",
+      "state": "गोवा",
+      "district": "साउथ गोवा",
+      "tehsil": "पोंडा"
+    }
+  ],
+
+  "UsedTractorTestData": [
+    {
+      "name" : "Testqa SUT W",
+      "mobile": "9740435404",
+      "location": "Belagavi",
+      "brand": "Mahindra",
+      "model": "255 DI Power plus",
+      "year": "2025",
+      "engineCondition": "0-25% (Poor)",
+      "tyreCondition": "0-25% (Poor)",
+      "engineHours": "1001 - 2000"
+    },
+    {
+      "ownerName" : "Testqa SUI W",
+      "contactMobile": "9876543404",
+      "state": "Rajasthan",
+      "district": "Chittorgarh",
+      "tehsil": "Chittaurgarh",
+      "brand": "79",
+      "modelName": "265 DI Power plus",
+      "year": "2024",
+      "category": "56",
+      "price": "50000",
+      "description": "Test description for SUT",
+      "contactName": "Test Owner",
+      "pincode": "123456"
+    },
+    {
+      "ownerName" : "Testqa SUH W",
+      "contactMobile": "9123456404",
+      "state": "Rajasthan",
+      "district": "Dholpur",
+      "tehsil": "Dholpur",
+      "brand": "64",
+      "modelName": "265 DI Power plus",
+      "cropType":"paddy",
+      "cuttingWidth": "8-14 Feets",
+      "driveType": "Self",
+      "year": "2020", 
+      "title": "Test Owner",
+      "engineHours": "1001 - 2000",
+      "price": "50000",
+      "description": "Test description for SUH",
+      "pincode": "123456"
+    }
+  ]
+}
