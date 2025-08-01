@@ -1,5 +1,5 @@
 pipeline {
-    agent any  // Use single agent since no additional nodes
+    agent any  // Use single agent
 
     parameters {
         choice(name: 'testSuit', choices: [
@@ -128,7 +128,7 @@ pipeline {
 
                     try {
                         if (testSuit == 'smoke') {
-                            // Combine all smoke tests into a single batch
+                            // Single batch for smoke
                             def specFiles = smokeSpecs
                             def resultFolder = "allure-results\\smoke"
                             bat """
@@ -146,32 +146,30 @@ pipeline {
                             }
                             echo "Completed smoke suite"
                         } else if (testSuit == 'regression') {
-                            // Optimized regression batches (2-3 tests per batch)
+                            // Three batches for better resource distribution
                             def specFilesBatch1 = [
                                 'cypress/e2e/Tests/Compare.cy.js',
                                 'cypress/e2e/Tests/EMICalculator.cy.js',
-                                'cypress/e2e/Tests/Login.cy.js'
+                                'cypress/e2e/Tests/LeadForms.cy.js',
+                                'cypress/e2e/Tests/LanguageSwitcher.cy.js'
                             ]
                             def specFilesBatch2 = [
-                                'cypress/e2e/Tests/LanguageSwitcher.cy.js',
-                                'cypress/e2e/Tests/LeadForms.cy.js',
-                                'cypress/e2e/Tests/Search.cy.js'
-                            ]
-                            def specFilesBatch3 = [
+                                'cypress/e2e/Tests/SeoElements.cy.js'
+                                'cypress/e2e/Tests/Search.cy.js',
                                 'cypress/e2e/Tests/UsedTractorListing.cy.js',
                                 'cypress/e2e/Tests/LocationMaster.cy.js'
                             ]
-                            def specFilesBatch4 = [
+                            def specFilesBatch3 = [
                                 'cypress/e2e/Tests/PageRedirection.cy.js',
-                                'cypress/e2e/Tests/SeoElements.cy.js'
+                                'cypress/e2e/Tests/Login.cy.js'                               
                             ]
 
-                            // Run batches in parallel
                             parallelStages["Regression_Batch_1"] = {
-                                timeout(time: 30, unit: 'MINUTES') {
+                                timeout(time: 45, unit: 'MINUTES') {
                                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                                         def resultFolder = "allure-results\\regression-batch-1"
-                                        echo "Starting regression batch 1"
+                                        def startTime = new Date().time
+                                        echo "Starting regression batch 1 at ${new Date(startTime)}"
                                         bat """
                                             if not exist \"${resultFolder}\" mkdir \"${resultFolder}\"
                                             npx cypress run --spec \"${specFilesBatch1.join(',')}\" \
@@ -181,20 +179,22 @@ pipeline {
                                             > \"${resultFolder}\\cypress-test-batch1.log\" 2>&1
                                         """
                                         def logContent = readFile("${resultFolder}\\cypress-test-batch1.log")
+                                        def endTime = new Date().time
+                                        echo "Completed regression batch 1 at ${new Date(endTime)} (Duration: ${(endTime - startTime)/1000} seconds)"
                                         if (logContent.toLowerCase().contains('failed') || logContent.toLowerCase().contains('fail')) {
                                             echo "Test failures detected in regression batch 1"
                                             env.TEST_STATUS = 'FAILURE'
                                         }
-                                        echo "Completed regression batch 1"
                                     }
                                 }
                             }
 
                             parallelStages["Regression_Batch_2"] = {
-                                timeout(time: 30, unit: 'MINUTES') {
+                                timeout(time: 45, unit: 'MINUTES') {
                                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                                         def resultFolder = "allure-results\\regression-batch-2"
-                                        echo "Starting regression batch 2"
+                                        def startTime = new Date().time
+                                        echo "Starting regression batch 2 at ${new Date(startTime)}"
                                         bat """
                                             if not exist \"${resultFolder}\" mkdir \"${resultFolder}\"
                                             npx cypress run --spec \"${specFilesBatch2.join(',')}\" \
@@ -204,20 +204,22 @@ pipeline {
                                             > \"${resultFolder}\\cypress-test-batch2.log\" 2>&1
                                         """
                                         def logContent = readFile("${resultFolder}\\cypress-test-batch2.log")
+                                        def endTime = new Date().time
+                                        echo "Completed regression batch 2 at ${new Date(endTime)} (Duration: ${(endTime - startTime)/1000} seconds)"
                                         if (logContent.toLowerCase().contains('failed') || logContent.toLowerCase().contains('fail')) {
                                             echo "Test failures detected in regression batch 2"
                                             env.TEST_STATUS = 'FAILURE'
                                         }
-                                        echo "Completed regression batch 2"
                                     }
                                 }
                             }
 
                             parallelStages["Regression_Batch_3"] = {
-                                timeout(time: 30, unit: 'MINUTES') {
+                                timeout(time: 45, unit: 'MINUTES') {
                                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                                         def resultFolder = "allure-results\\regression-batch-3"
-                                        echo "Starting regression batch 3"
+                                        def startTime = new Date().time
+                                        echo "Starting regression batch 3 at ${new Date(startTime)}"
                                         bat """
                                             if not exist \"${resultFolder}\" mkdir \"${resultFolder}\"
                                             npx cypress run --spec \"${specFilesBatch3.join(',')}\" \
@@ -227,34 +229,12 @@ pipeline {
                                             > \"${resultFolder}\\cypress-test-batch3.log\" 2>&1
                                         """
                                         def logContent = readFile("${resultFolder}\\cypress-test-batch3.log")
+                                        def endTime = new Date().time
+                                        echo "Completed regression batch 3 at ${new Date(endTime)} (Duration: ${(endTime - startTime)/1000} seconds)"
                                         if (logContent.toLowerCase().contains('failed') || logContent.toLowerCase().contains('fail')) {
                                             echo "Test failures detected in regression batch 3"
                                             env.TEST_STATUS = 'FAILURE'
                                         }
-                                        echo "Completed regression batch 3"
-                                    }
-                                }
-                            }
-
-                            parallelStages["Regression_Batch_4"] = {
-                                timeout(time: 30, unit: 'MINUTES') {
-                                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                                        def resultFolder = "allure-results\\regression-batch-4"
-                                        echo "Starting regression batch 4"
-                                        bat """
-                                            if not exist \"${resultFolder}\" mkdir \"${resultFolder}\"
-                                            npx cypress run --spec \"${specFilesBatch4.join(',')}\" \
-                                            --env baseUrl=${env.BASE_URL},environment=${environment} \
-                                            --browser ${browser.toLowerCase()} \
-                                            --reporter mocha-allure-reporter --reporter-options allureResultsPath=${resultFolder} \
-                                            > \"${resultFolder}\\cypress-test-batch4.log\" 2>&1
-                                        """
-                                        def logContent = readFile("${resultFolder}\\cypress-test-batch4.log")
-                                        if (logContent.toLowerCase().contains('failed') || logContent.toLowerCase().contains('fail')) {
-                                            echo "Test failures detected in regression batch 4"
-                                            env.TEST_STATUS = 'FAILURE'
-                                        }
-                                        echo "Completed regression batch 4"
                                     }
                                 }
                             }

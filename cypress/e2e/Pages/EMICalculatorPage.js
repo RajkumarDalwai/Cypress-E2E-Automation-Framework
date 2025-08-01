@@ -10,6 +10,7 @@ class EMICalculatorPage {
     monthlyEMI: () => cy.get('.total_emi'),
     loanAmount: () => cy.get('#loanAmount'),
     totalPayable: () => cy.get('#totalPayable'),
+    downPayment: () => cy.get('#downPaymentValue')
   };
 
   // ======================== ✅ Actions =======================//
@@ -41,6 +42,11 @@ class EMICalculatorPage {
   getTotalPayable() {
     return this.elements.totalPayable().invoke('text').then(text => text.trim());
   }
+
+  getDownPayment() {
+    return this.elements.downPayment().invoke('text').then(text => text.trim());
+  }
+
 }
 
 export default new EMICalculatorPage();
