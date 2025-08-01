@@ -65,7 +65,7 @@ pipeline {
         stage('Clean Allure Results') {
             steps {
                 echo 'Cleaning old Allure results...'
-                sh 'rm -rf allure-results merged-allure-results || true'
+                bat 'rmdir /s /q allure-results merged-allure-results || exit 0'
             }
         }
 
@@ -74,14 +74,14 @@ pipeline {
                 script {
                     if (!fileExists('node_modules')) {
                         echo 'node_modules not found. Installing dependencies...'
-                        sh 'npm install'
+                        bat 'npm install'
                     } else {
                         echo 'node_modules already exists. Skipping npm install.'
-                        def cypressVersion = sh(script: 'node -p "require(\'./node_modules/cypress/package.json\').version"', returnStdout: true).trim()
-                        def installedBinary = sh(script: 'npx cypress --version', returnStdout: true).trim().split(' ')[0]
+                        def cypressVersion = bat(script: 'node -p "require(\'.\\node_modules\\cypress\\package.json\').version"', returnStdout: true).trim()
+                        def installedBinary = bat(script: 'npx cypress --version', returnStdout: true).trim().split(' ')[0]
                         if (cypressVersion != installedBinary) {
                             echo 'Cypress binary outdated. Reinstalling...'
-                            sh 'npx cypress install'
+                            bat 'npx cypress install'
                         } else {
                             echo 'Cypress binary up-to-date. Skipping install.'
                         }
@@ -132,17 +132,16 @@ pipeline {
                             // Run smoke suite in parallel (single batch)
                             smokeSpecs.eachWithIndex { specFile, index ->
                                 def specName = specFile.tokenize('/').last().replace('.cy.js', '')
-                                def resultFolder = "allure-results/smoke-spec-${index}-${specName}"
+                                def resultFolder = "allure-results\\smoke-spec-${index}-${specName}"
                                 parallelStages["Smoke_Spec_${index}_${specName}"] = {
                                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                                        sh """
-                                            mkdir -p ${resultFolder}
-                                            xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+                                        bat """
+                                            if not exist "${resultFolder}" mkdir "${resultFolder}"
                                             npx cypress run --spec "${specFile}" \
                                             --env baseUrl=${env.BASE_URL},environment=${environment} \
                                             --browser ${browser.toLowerCase()} \
                                             --reporter mocha-allure-reporter --reporter-options allureResultsPath=${resultFolder} \
-                                            | tee ${resultFolder}/cypress-test.log
+                                            > "${resultFolder}\\cypress-test.log" 2>&1
                                         """
                                         def logContent = readFile("${resultFolder}/cypress-test.log")
                                         if (logContent.toLowerCase().contains('failed') || logContent.toLowerCase().contains('fail')) {
@@ -162,15 +161,14 @@ pipeline {
                             // Batch 1
                             parallelStages["Regression_Batch_1"] = {
                                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                                    def resultFolder = "allure-results/regression-batch-1"
-                                    sh """
-                                        mkdir -p ${resultFolder}
-                                        xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+                                    def resultFolder = "allure-results\\regression-batch-1"
+                                    bat """
+                                        if not exist "${resultFolder}" mkdir "${resultFolder}"
                                         npx cypress run --spec "${batch1.join(',')}" \
                                         --env baseUrl=${env.BASE_URL},environment=${environment} \
                                         --browser ${browser.toLowerCase()} \
                                         --reporter mocha-allure-reporter --reporter-options allureResultsPath=${resultFolder} \
-                                        | tee ${resultFolder}/cypress-test.log
+                                        > "${resultFolder}\\cypress-test.log" 2>&1
                                     """
                                     def logContent = readFile("${resultFolder}/cypress-test.log")
                                     if (logContent.toLowerCase().contains('failed') || logContent.toLowerCase().contains('fail')) {
@@ -183,15 +181,14 @@ pipeline {
                             // Batch 2
                             parallelStages["Regression_Batch_2"] = {
                                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                                    def resultFolder = "allure-results/regression-batch-2"
-                                    sh """
-                                        mkdir -p ${resultFolder}
-                                        xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+                                    def resultFolder = "allure-results\\regression-batch-2"
+                                    bat """
+                                        if not exist "${resultFolder}" mkdir "${resultFolder}"
                                         npx cypress run --spec "${batch2.join(',')}" \
                                         --env baseUrl=${env.BASE_URL},environment=${environment} \
                                         --browser ${browser.toLowerCase()} \
                                         --reporter mocha-allure-reporter --reporter-options allureResultsPath=${resultFolder} \
-                                        | tee ${resultFolder}/cypress-test.log
+                                        > "${resultFolder}\\cypress-test.log" 2>&1
                                     """
                                     def logContent = readFile("${resultFolder}/cypress-test.log")
                                     if (logContent.toLowerCase().contains('failed') || logContent.toLowerCase().contains('fail')) {
@@ -205,14 +202,13 @@ pipeline {
                             def testTypePath = "cypress/e2e/Tests/${testType}.cy.js"
                             def testTypeExists = fileExists(testTypePath)
                             if (testTypeExists) {
-                                sh """
-                                    mkdir -p allure-results
-                                    xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+                                bat """
+                                    if not exist "allure-results" mkdir "allure-results"
                                     npx cypress run --spec "${testTypePath}" \
                                     --env baseUrl=${env.BASE_URL},environment=${environment} \
                                     --browser ${browser.toLowerCase()} \
                                     --reporter mocha-allure-reporter --reporter-options allureResultsPath=allure-results \
-                                    | tee allure-results/cypress-test.log
+                                    > "allure-results\\cypress-test.log" 2>&1
                                 """
                                 def logContent = readFile("allure-results/cypress-test.log")
                                 if (logContent.toLowerCase().contains('failed') || logContent.toLowerCase().contains('fail')) {
@@ -255,12 +251,12 @@ pipeline {
                     def parallelStagesSize = env.PARALLEL_STAGES_SIZE ? env.PARALLEL_STAGES_SIZE.toInteger() : 0
                     if (parallelStagesSize > 0) {
                         echo 'Merging Allure results from parallel runs...'
-                        sh '''
-                            mkdir -p merged-allure-results
-                            find allure-results/ -type f -name '*.json' -exec cp {} merged-allure-results/ \\;
-                            find allure-results/ -type f -name '*.xml' -exec cp {} merged-allure-results/ \\;
-                            find allure-results/ -type f -name '*.txt' -exec cp {} merged-allure-results/ \\;
-                            cp allure-results/environment.properties merged-allure-results/ || true
+                        bat '''
+                            if not exist "merged-allure-results" mkdir "merged-allure-results"
+                            copy allure-results\\*.json merged-allure-results\\ >nul 2>&1
+                            copy allure-results\\*.xml merged-allure-results\\ >nul 2>&1
+                            copy allure-results\\*.txt merged-allure-results\\ >nul 2>&1
+                            if exist "allure-results\\environment.properties" copy "allure-results\\environment.properties" "merged-allure-results\\" >nul 2>&1
                         '''
                         allure([results: [[path: 'merged-allure-results']]])
                     } else {
