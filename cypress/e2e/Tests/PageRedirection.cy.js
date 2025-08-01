@@ -3,11 +3,11 @@ import '../../support/commands';
 
 describe('Page Redirection Suit', () => {
   
-  // it('1. Verify Page redirections Under Header from Homepage', () => {
-  //   cy.visit(Cypress.env('baseUrl'));
-  //   cy.wait(2000);
-  //   cy.validateAllLinks(PageRedirectionPage.headerLinksSelector);
-  // });
+  it('1. Verify Page redirections Under Header from Homepage', () => {
+    cy.visit(Cypress.env('baseUrl'));
+    cy.wait(2000);
+    cy.validateAllLinks(PageRedirectionPage.headerLinksSelector);
+  });
 
   it('2. Verify Page redirections Under Footer from Homepage', () => {
     cy.visit(Cypress.env('baseUrl'));
@@ -15,7 +15,7 @@ describe('Page Redirection Suit', () => {
     cy.validateAllLinks(PageRedirectionPage.footerLinksSelector);
   });
 
- /* it('3. Verify Page redirections for Homepage', () => {
+  it('3. Verify Page redirections for Homepage', () => {
     cy.visit(Cypress.env('baseUrl'));
     cy.wait(2000);
     cy.validateAllLinks(PageRedirectionPage.commonPageLinksSelector);
@@ -61,6 +61,6 @@ describe('Page Redirection Suit', () => {
     cy.visit(Cypress.env('baseUrl') + 'tractor-news/madras-hc-grants-status-quo-on-massey-ferguson-brand/');
     cy.wait(2000);
     cy.validateAllLinks(PageRedirectionPage.commonPageLinksSelector);
-  });*/
+  });
 
 });
