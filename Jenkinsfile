@@ -142,7 +142,7 @@ pipeline {
                                     timeout(time: 20, unit: 'MINUTES') {
                                         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                                             echo "Starting test for ${specFile} in ${resultFolder}"
-                                            bat "timeout /t ${index * 5}" // Stagger start with 5-second delay
+                                            bat "powershell -Command \"Start-Sleep -Seconds ${index * 5}\"" // Use PowerShell for delay
                                             bat """
                                                 if not exist "${resultFolder}" mkdir "${resultFolder}"
                                                 npx cypress run --spec "${specFile}" \
@@ -179,7 +179,7 @@ pipeline {
                                     timeout(time: 20, unit: 'MINUTES') {
                                         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                                             echo "Starting test for ${specFile} in ${resultFolder}"
-                                            bat "timeout /t ${index * 5}" // Stagger start with 5-second delay
+                                            bat "powershell -Command \"Start-Sleep -Seconds ${index * 5}\"" // Use PowerShell for delay
                                             bat """
                                                 if not exist "${resultFolder}" mkdir "${resultFolder}"
                                                 npx cypress run --spec "${specFile}" \
@@ -211,6 +211,7 @@ pipeline {
                                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                                         def resultFolder = "allure-results\\regression-batch-1"
                                         echo "Starting regression batch 1"
+                                        bat "powershell -Command \"Start-Sleep -Seconds 0\"" // Stagger start
                                         bat """
                                             if not exist "${resultFolder}" mkdir "${resultFolder}"
                                             npx cypress run --spec "${specFilesBatch1.join(',')}" \
@@ -240,6 +241,7 @@ pipeline {
                                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                                         def resultFolder = "allure-results\\regression-batch-2"
                                         echo "Starting regression batch 2"
+                                        bat "powershell -Command \"Start-Sleep -Seconds 5\"" // Stagger start
                                         bat """
                                             if not exist "${resultFolder}" mkdir "${resultFolder}"
                                             npx cypress run --spec "${specFilesBatch2.join(',')}" \
@@ -268,6 +270,7 @@ pipeline {
                                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                                         def resultFolder = "allure-results\\regression-batch-3"
                                         echo "Starting regression batch 3"
+                                        bat "powershell -Command \"Start-Sleep -Seconds 10\"" // Stagger start
                                         bat """
                                             if not exist "${resultFolder}" mkdir "${resultFolder}"
                                             npx cypress run --spec "${specFilesBatch3.join(',')}" \
@@ -295,6 +298,7 @@ pipeline {
                                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                                         def resultFolder = "allure-results\\regression-batch-4"
                                         echo "Starting regression batch 4"
+                                        bat "powershell -Command \"Start-Sleep -Seconds 15\"" // Stagger start
                                         bat """
                                             if not exist "${resultFolder}" mkdir "${resultFolder}"
                                             npx cypress run --spec "${specFilesBatch4.join(',')}" \
@@ -322,6 +326,7 @@ pipeline {
                                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                                         def resultFolder = "allure-results\\regression-batch-5"
                                         echo "Starting regression batch 5"
+                                        bat "powershell -Command \"Start-Sleep -Seconds 20\"" // Stagger start
                                         bat """
                                             if not exist "${resultFolder}" mkdir "${resultFolder}"
                                             npx cypress run --spec "${specFilesBatch5.join(',')}" \
