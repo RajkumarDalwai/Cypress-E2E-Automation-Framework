@@ -77,7 +77,7 @@ pipeline {
                         bat 'npm install'
                     } else {
                         echo 'node_modules already exists. Skipping npm install.'
-                        def cypressVersion = bat(script: 'node -p "require(\'.\\node_modules\\cypress\\package.json\').version"', returnStdout: true).trim()
+                        def cypressVersion = bat(script: 'node -p "require(\'./node_modules/cypress/package.json\').version"', returnStdout: true).trim()
                         def installedBinary = bat(script: 'npx cypress --version', returnStdout: true).trim().split(' ')[0]
                         if (cypressVersion != installedBinary) {
                             echo 'Cypress binary outdated. Reinstalling...'
