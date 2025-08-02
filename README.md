@@ -16,31 +16,44 @@ Key capabilities include:
 
 ---
 
-## 🚀 Features
+## 🚀 Key Features
 
-* **⚡ Rapid Execution**
-  Harness Cypress’s blazing fast test runner and auto-reload capabilities.
+### ⚡ Blazing Fast Execution
 
-* **📄 Page Object Model (POM)**
-  All UI interactions are abstracted in dedicated page classes for each module.
+Leverage Cypress’s fast test runner with auto-reload for rapid development and feedback cycles.
 
-* **♻️ Custom Commands**
-  Common interactions are centralized via `commands.js` and `seocommands.js`.
+### 📄 Page Object Model (POM)
 
-* **📂 Modular Test Structure**
-  Organized test files by feature/module for maintainability.
+Encapsulates UI interactions in modular, reusable page classes to promote maintainability and scalability.
 
-* **🧪 Test Fixtures**
-  Test data like SEO metadata, state dropdown values, lead form input, etc., are stored in well-structured folders under `fixtures/Test-Data`.
+### ♻️ Custom Commands
 
-* **🌐 Multi-Environment Support**
-  Easily switch base URLs and environment-specific config using environment variables.
+Reusable functions for common actions are centralized in `commands.js` and `seocommands.js`, improving code reuse and readability.
 
-* **📊 Allure Reporting Integrated**
-  Generates rich test execution reports including steps, logs, screenshots, and trends.
+### 📂 Modular Test Structure
 
-* **⚙️ Jenkins CI/CD**
-  Run tests on commit or schedule using Jenkins pipeline with Windows-compatible `bat` steps.
+Test specs are logically organized by feature or module, ensuring clean and manageable code.
+
+### 🧪 Structured Test Fixtures
+
+All test data—like SEO metadata, dropdown values, and form inputs—are maintained in organized folders under `fixtures/Test-Data`.
+
+### 🌐 Multi-Environment Support
+
+Switch environments seamlessly using environment-specific variables for base URLs and configuration.
+
+### 📊 Allure Reporting Integration
+
+Generates rich execution reports with step-wise logs, screenshots, and historical trends to aid debugging and reporting.
+
+### ⚙️ Jenkins CI/CD Integration
+
+Supports automated test runs on code changes or schedules via Jenkins pipelines using Windows-compatible `bat` commands.
+
+### ⚡ Parallel Test Execution
+
+Accelerates execution by running Cypress tests in parallel across multiple Jenkins agents or stages, enabling faster CI feedback and scalable test distribution.
+
 
 ---
 
