@@ -99,25 +99,30 @@ pipeline {
                     def browser = params.browser
                     def parallelStages = [:]
 
-                    // All test files under cypress/e2e/Tests
-                    def allSpecs = [
-                        'cypress/e2e/Tests/Compare.cy.js',
+                    // Smoke suite tests (single batch)
+                    def smokeSpecs = [
                         'cypress/e2e/Tests/EMICalculator.cy.js',
-                        'cypress/e2e/Tests/LanguageSwitcher.cy.js',
-                        'cypress/e2e/Tests/LeadForms.cy.js',
-                        'cypress/e2e/Tests/LocationMaster.cy.js',
-                        'cypress/e2e/Tests/Login.cy.js',
-                        'cypress/e2e/Tests/PageRedirection.cy.js',
-                        'cypress/e2e/Tests/Search.cy.js',
                         'cypress/e2e/Tests/SeoElements.cy.js',
-                        'cypress/e2e/Tests/UsedTractorListing.cy.js'
+                        'cypress/e2e/Tests/LanguageSwitcher.cy.js',
+                        'cypress/e2e/Tests/LeadForms.cy.js'
                     ]
 
-                    // Smoke suite tests (removed PageRedirection.cy.js)
-                    def smokeSpecs = [
+                    // Regression suite tests (three batches)
+                    def specFilesBatch1 = [
+                        'cypress/e2e/Tests/EMICalculator.cy.js',
+                        'cypress/e2e/Tests/SeoElements.cy.js',
+                        'cypress/e2e/Tests/LanguageSwitcher.cy.js',
+                        'cypress/e2e/Tests/LeadForms.cy.js'
+                    ]
+                    def specFilesBatch2 = [
                         'cypress/e2e/Tests/Login.cy.js',
-                        'cypress/e2e/Tests/LeadForms.cy.js',
-                        'cypress/e2e/Tests/UsedTractorListing.cy.js'
+                        'cypress/e2e/Tests/Search.cy.js',
+                        'cypress/e2e/Tests/UsedTractorListing.cy.js',
+                        'cypress/e2e/Tests/LocationMaster.cy.js'
+                    ]
+                    def specFilesBatch3 = [
+                        'cypress/e2e/Tests/PageRedirection.cy.js',
+                        'cypress/e2e/Tests/Compare.cy.js'
                     ]
 
                     echo "Selected test suite: ${testSuit}"
@@ -146,24 +151,7 @@ pipeline {
                             }
                             echo "Completed smoke suite"
                         } else if (testSuit == 'regression') {
-                            // Three batches for better resource distribution
-                            def specFilesBatch1 = [
-                                'cypress/e2e/Tests/Compare.cy.js',
-                                'cypress/e2e/Tests/EMICalculator.cy.js',
-                                'cypress/e2e/Tests/LeadForms.cy.js',
-                                'cypress/e2e/Tests/LanguageSwitcher.cy.js'
-                            ]
-                            def specFilesBatch2 = [
-                                'cypress/e2e/Tests/SeoElements.cy.js'
-                                'cypress/e2e/Tests/Search.cy.js',
-                                'cypress/e2e/Tests/UsedTractorListing.cy.js',
-                                'cypress/e2e/Tests/LocationMaster.cy.js'
-                            ]
-                            def specFilesBatch3 = [
-                                'cypress/e2e/Tests/PageRedirection.cy.js',
-                                'cypress/e2e/Tests/Login.cy.js'                               
-                            ]
-
+                            // Three batches for regression
                             parallelStages["Regression_Batch_1"] = {
                                 timeout(time: 45, unit: 'MINUTES') {
                                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
